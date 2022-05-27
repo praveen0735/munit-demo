@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="munit-demo-suite.xml" />
+	<munit:test name="munit-demoFlow-successTest" doc:id="8d71fb88-2af4-4cbe-a7f1-3d440c9a0b10" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="0d002142-5596-4d76-9535-f7fddb4b00a7" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3b7ea6c2-d178-4f16-91b8-ffd7c14d495c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://munitdemoFlowsuccessTest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="d0e8f31b-dc82-4d52-a7fc-8e780f8c2369">
+				<munit:payload value="#[readUrl('classpath://munitdemoFlowsuccessTest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://munitdemoFlowsuccessTest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to munit-demoFlow" doc:id="0a080316-5828-4766-8b03-712c97743b80" name="munit-demoFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="2bc57689-ac47-49e0-9a7f-e681b469733f" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import munitdemoFlowsuccessTest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="munit-demoFlow-empIdDoesntExist" doc:id="08836ba4-073c-4423-890d-46a7c2de839d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="9d62a35a-173b-40f7-b30c-d5cdeefe4c71" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3b7ea6c2-d178-4f16-91b8-ffd7c14d495c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://munitdemoFlowempIdDoesntExist\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="680525f7-33a3-4caa-b228-1dded866945d" >
+				<munit:payload value="#[readUrl('classpath://munitdemoFlowempIdDoesntExist\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://munitdemoFlowempIdDoesntExist\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to munit-demoFlow" doc:id="06cc5d93-1f03-493a-a835-fd5473122f62" name="munit-demoFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="a4f2a444-2663-4e90-8847-bc87c6e70595" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import munitdemoFlowempIdDoesntExist::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
